@@ -1,0 +1,28 @@
+You add a taint to a node using kubectl taint. For example,
+
+kubectl taint nodes node1 key=value:NoSchedule
+
+places a taint on node node1. The taint has key key, value value, and taint
+effect NoSchedule. This means that no pod will be able to schedule onto node1
+unless it has a matching toleration.
+
+To remove the taint added by the command above, you can run:
+
+kubectl taint nodes node1 key:NoSchedule-
+
+In-order to launch POD with the matched taint:
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    env: test
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+  tolerations:
+  - key: "example-key"
+    operator: "Exists"
+    effect: "NoSchedule"
