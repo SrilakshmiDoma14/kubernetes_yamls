@@ -54,6 +54,9 @@ root@kubernetesmaster:~# kubectl config set-context sudhams-context
 Context "sudhams-context" modified.
 root@kubernetesmaster:~#
 
+or
+
+kubectl config set-context $(kubectl config current-context) --namespace=mynamespace
 
 RBAC using username and password:
 =================================

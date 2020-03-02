@@ -168,6 +168,10 @@ spec:
 
 save and exit
 
+nohup kubectl proxy --address="192.168.0.50" -p 443 --accept-hosts='^*$' &
+
+Reference: https://github.com/kubernetes/dashboard
+
 Now follow below commands, to give access to dashboard with fill privileges (cluster-admin role):
 
 #kubectl create serviceaccount dashboard -n default
@@ -175,6 +179,8 @@ Now follow below commands, to give access to dashboard with fill privileges (clu
 #kubectl create clusterrolebinding dashboard-admin -n default  --clusterrole=cluster-admin  --serviceaccount=default:dashboard
 
 #kubectl get secret $(kubectl get serviceaccount dashboard -o jsonpath="{.secrets[0].name}") -o jsonpath="{.data.token}" | base64 --decode
+
+helm install --name heapster stable/heapster --namespace kube-system (Reference: https://www.replex.io/blog/how-to-install-access-and-add-heapster-metrics-to-the-kubernetes-dashboard)
 
 Use above token to login to kubernetes dashboard
 

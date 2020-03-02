@@ -47,6 +47,25 @@ spec:
     effect: "NoSchedule"
 +++
 
+kubectl taint nodes es-node elasticsearch=false:NoExecute
 
+++
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    env: test
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+  tolerations:
+  - key: elasticsearch
+    operator: Equal
+    value: false
+    effect: NoExecute
+++
 
 Reference: https://docs.openshift.com/container-platform/3.6/admin_guide/scheduling/taints_tolerations.html

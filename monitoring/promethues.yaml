@@ -1,9 +1,9 @@
-#Create a namespace "monitoring" to create prometheus deployment on that
-#specific namespace
+Create a namespace "monitoring" to create prometheus deployment on that
+specific namespace
 
-#kubectl create namespace monitoring
+kubectl create namespace monitoring
 
-apiVersion: rbac.authorization.k8s.io/v1beta1
+aapiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: prometheus
@@ -186,13 +186,16 @@ data:
           action: replace
           target_label: kubernetes_name
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus-deployment
   namespace: monitoring
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-server
   template:
     metadata:
       labels:
@@ -236,6 +239,44 @@ spec:
       targetPort: 9090
       nodePort: 30000
 
-#Now we access the prometheus dashboard with node_ip:30000
+Now we access the prometheus dashboard with node_ip:30000
 
-#Reference: git clone https://github.com/bibinwilson/kubernetes-prometheus
+++
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-deployment
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana-server
+  template:
+    metadata:
+      labels:
+        app: grafana-server
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-service
+  namespace: monitoring
+spec:
+  selector:
+    app: grafana-server
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 31000
+++
+
+
+Reference: git clone https://github.com/bibinwilson/kubernetes-prometheus

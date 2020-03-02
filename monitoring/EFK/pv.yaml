@@ -12,6 +12,7 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: "/mnt/data/efk-data"
+    type: DirectoryOrCreate
 ---
 kind: PersistentVolume
 apiVersion: v1
@@ -27,3 +28,4 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: "/mnt/data/efk-master"
+    type: DirectoryOrCreate
