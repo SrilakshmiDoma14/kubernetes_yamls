@@ -1,0 +1,77 @@
+version: "3"
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    volumes:
+      - jenkins_data:/var/jenkins_home
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+
+volumes:
+  jenkins_data: {}
+---
+version: '3.0'
+
+services:
+
+  registry:
+    container_name: docker-registry
+    restart: always
+    image: registry:2
+    ports:
+      - 5000:5000
+    volumes:
+      - docker-registry:/var/lib/registry
+
+volumes:
+  docker-registry-data: {}
+---
+version: "3"
+
+services:
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "9000:9000"
+
+volumes:
+  portainer_data: {}
+---
+version: "2"
+services:
+  node1:
+    container_name: node1
+    image: percona/percona-xtradb-cluster:5.7
+    environment:
+      - CLUSTER_NAME=cluster1
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - pxc-network
+  node2:
+    container_name: node2
+    image: percona/percona-xtradb-cluster:5.7
+    environment:
+      - CLUSTER_NAME=cluster1
+      - CLUSTER_JOIN=node1
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - pxc-network
+  node3:
+    container_name: node3
+    image: percona/percona-xtradb-cluster:5.7
+    environment:
+      - CLUSTER_NAME=cluster1
+      - CLUSTER_JOIN=node1
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - pxc-network
+networks:
+  pxc-network:
+    driver: bridge
